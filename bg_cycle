@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]
+	then
+		echo "usage: $0 <path>"
+		echo -e "\n$0 is a program that periodically each 5 minutes change the background of your desktop"    
+		echo -e "where:\n\t<path> path of directory where images resides"
+		exit -1;
+fi
+
+get_abs_filename() {
+	echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+}
+
+for f in `find $1/ -iname '*'`
+do
+	file -ib $f | grep image >/dev/null 
+	if [[ $? -eq 0 ]]
+	then
+		f=$(get_abs_filename $f)
+	  	gsettings set org.gnome.desktop.background picture-uri file://$f
+		#echo $f
+		sleep 5m
+	fi
+done
+
+
